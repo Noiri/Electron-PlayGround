@@ -1,10 +1,11 @@
 const electron = require('electron');
 
-const { app, BrowserWindow, Menu } = electron;
+const { app, BrowserWindow, Menu, ipcMain } = electron;
 
 //スコープの問題に対処するためにここに宣言するのが一般的らしい
 let mainWindow;
 let addWindow;
+let exist_addWindow = false;
 
 app.on('ready', () => {
     mainWindow = new BrowserWindow({
@@ -18,14 +19,28 @@ app.on('ready', () => {
 });
 
 function createAddWindow(){
-    addWindow = new BrowserWindow({
-        width: 300,
-        height: 200,
-        title: 'Add New Todo'
+    if(exist_addWindow == false){
+        exist_addWindow = true;
+        addWindow = new BrowserWindow({
+            width: 300,
+            height: 200,
+            title: 'Add New Todo'
+            
     });
     addWindow.loadURL(`file://${__dirname}/add.html`);
+    }
+    
+    addWindow.on('closed', () => {
+        addWindow = null;
+        exist_addWindow = false;
+    });
 }
 
+//中継してやる
+ipcMain.on('todo:add', (event, todo) => {
+    mainWindow.webContents.send('todo:add', todo);
+    addWindow.close();
+});
 
 const menuTemplate = [
     {
@@ -58,6 +73,7 @@ if(process.env.NODE_ENV !== 'production'){
     menuTemplate.push({
         label: 'Developer',
         submenu: [
+            { role: 'reload' },
             {
                 label: 'Toggle Develiper Tools',
                 accelerator: process.platform === 'darwin' ? 'Command+Alt+I' : 'Ctrl+Shift+I',
