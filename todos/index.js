@@ -7,8 +7,11 @@ let mainWindow;
 let addWindow;
 
 app.on('ready', () => {
-    mainWindow = new BrowserWindow({});
+    mainWindow = new BrowserWindow({
+        width: 1200,
+        height: 800,});
     mainWindow.loadURL(`file://${__dirname}/main.html`);
+    mainWindow.on('closed', () => app.quit());
 
     const mainMenu = Menu.buildFromTemplate(menuTemplate);
     Menu.setApplicationMenu(mainMenu);
@@ -48,5 +51,20 @@ const menuTemplate = [
 if(process.platform === 'darwin'){
     menuTemplate.unshift({
         label: app.getName()
+    });
+}
+
+if(process.env.NODE_ENV !== 'production'){
+    menuTemplate.push({
+        label: 'Developer',
+        submenu: [
+            {
+                label: 'Toggle Develiper Tools',
+                accelerator: process.platform === 'darwin' ? 'Command+Alt+I' : 'Ctrl+Shift+I',
+                click(item, focusedWindow){
+                    focusedWindow.toggleDevTools();
+                }
+            }
+        ]
     });
 }
