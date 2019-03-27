@@ -1,0 +1,2 @@
+# Electron-PlayGround
+Electron習得のため簡単なアプリケーションを作成する
