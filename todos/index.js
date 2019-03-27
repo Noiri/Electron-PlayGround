@@ -29,11 +29,17 @@ function createAddWindow(){
     });
     addWindow.loadURL(`file://${__dirname}/add.html`);
     }
-    
+
     addWindow.on('closed', () => {
         addWindow = null;
         exist_addWindow = false;
     });
+}
+
+
+function clearTodoList(){
+    //sendする際は宛先を指定する
+    mainWindow.webContents.send('todo:clear');
 }
 
 //中継してやる
@@ -47,8 +53,14 @@ const menuTemplate = [
         label: 'File',
         submenu: [
             { 
-                label: 'New Todo' ,
+                label: 'New Todo',
+                accelerator: 'Command+N',
                 click(){ createAddWindow(); }
+            },
+            {
+                label: 'Clear Todo List',
+                accelerator: 'Ctrl+L',
+                click(){ clearTodoList(); }
             },
             {
                 label:  'Quit',
