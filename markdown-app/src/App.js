@@ -26,6 +26,7 @@ class App extends Component{
             <div className={styles.App}>
                 <InputField onChange_setState={this.updateMarkdown} />
                 <Markdown markdown={this.state.markdown} />
+                <input type="submit" value="Convert" onClick={() => {console.log("test")}}></input>
             </div>
         );
     }
